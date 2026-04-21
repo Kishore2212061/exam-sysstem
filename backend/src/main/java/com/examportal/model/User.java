@@ -3,30 +3,38 @@ package com.examportal.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "users")
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String name;
 
-    @Indexed(unique = true)
+    @Column(unique = true)
     private String email;
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String phone;
@@ -37,10 +45,10 @@ public class User {
 
     private boolean isEmailVerified = false;
 
-    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public enum Role {

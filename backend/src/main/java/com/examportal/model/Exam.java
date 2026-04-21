@@ -3,10 +3,19 @@ package com.examportal.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,10 +23,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "exams")
+@Entity
+@Table(name = "exams")
 public class Exam {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String title;
@@ -34,8 +45,12 @@ public class Exam {
 
     private LocalDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
     private ExamStatus status = ExamStatus.DRAFT;
 
+    @ElementCollection
+    @CollectionTable(name = "exam_question_ids", joinColumns = @JoinColumn(name = "exam_id"))
+    @Column(name = "question_id")
     private List<String> questionIds;
 
     private int maxAttempts = 1;
@@ -48,10 +63,10 @@ public class Exam {
 
     private String createdBy; // Admin user ID
 
-    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public enum ExamStatus {
